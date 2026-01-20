@@ -1,30 +1,68 @@
-<!doctype html>
-<html lang="fr">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Evolution 2015 - 2025</title>
+// 1. Initialisation de la carte
+var map = L.map('mapid').setView([49.006, 7.704], 10);
 
-  <!-- Leaflet CSS (CDN) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+// 2. Ajouter le fond de carte (CartoDB Light)
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap &copy; CARTO'
+}).addTo(map);
 
-  <link rel="stylesheet" href="style.css">
-</head>
-<body class="map-page">
-  <header>
-    <a href="index.html" class="back-btn">Page d'accueil</a>
-    <h3 class="page-title">Les LCZ dans le PNR (comparaison 2015 - 2025)</h3>
-  </header>
+// 3. Définition du Lambert-93 pour Proj4
+const LAMBERT93 = 'EPSG:2154';
+const WGS84 = 'EPSG:4326';
+proj4.defs(LAMBERT93, '+proj=lcc +lat_1=49 +lat_2=44 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +units=m +no_defs');
 
-  <div id="mapid"></div>
+// 4. Fonction de reprojection robuste
+function reprojectCoords(coords) {
+    // Si c'est un point [x, y]
+    if (typeof coords[0] === 'number') {
+        const [x, y] = coords;
+        const [lon, lat] = proj4(LAMBERT93, WGS84, [x, y]);
+        // IMPORTANT : Leaflet attend [lat, lon] pour L.polygon 
+        // MAIS L.geoJSON attend [lon, lat] car il suit le standard GeoJSON
+        return [lon, lat]; 
+    }
+    // Si c'est un tableau de tableaux (récursion pour MultiPolygon)
+    return coords.map(reprojectCoords);
+}
 
-  <!-- Leaflet JS (CDN) -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  
-  <!-- Proj4js and Proj4Leaflet for coordinate conversion -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"></script>
+function reprojectGeoJSON(geojson) {
+    return {
+        ...geojson,
+        features: geojson.features.map(f => ({
+            ...f,
+            geometry: {
+                ...f.geometry,
+                coordinates: reprojectCoords(f.geometry.coordinates)
+            }
+        }))
+    };
+}
 
-  <!-- carte.js (local) -->
-  <script src="carte.js"></script>
-</body>
-</html>
+// 5. Chargement du fichier
+fetch('Data/PNR_VN.geojson')
+    .then(resp => {
+        if (!resp.ok) throw new Error("Erreur de chargement du fichier JSON");
+        return resp.json();
+    })
+    .then(data => {
+        // Correction de la projection
+        const reprojectedData = reprojectGeoJSON(data);
+        
+        // Affichage sur la carte
+        const pnrLayer = L.geoJSON(reprojectedData, {
+            style: {
+                color: '#2c7a3f',
+                weight: 3,
+                fillColor: '#7bd38b',
+                fillOpacity: 0.3
+            }
+        }).addTo(map);
+
+        // Ajuster la vue automatiquement sur le polygone
+        if (pnrLayer.getBounds().isValid()) {
+            map.fitBounds(pnrLayer.getBounds());
+        }
+    })
+    .catch(err => {
+        console.error('Erreur détaillée:', err);
+    });
