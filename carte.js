@@ -45,7 +45,7 @@ function reprojectGeoJSON(geojson) {
 }
 
 // Load and display the PNR polygon
-fetch('Data/Pnr_vosges_nord/PNR_VN.geojson')
+fetch('Data/PNR_VN.geojson')
     .then(resp => resp.json())
     .then(data => {
         const reprojected = reprojectGeoJSON(data);
@@ -63,4 +63,5 @@ fetch('Data/Pnr_vosges_nord/PNR_VN.geojson')
     })
     .catch(err => {
         console.error('Erreur lors du chargement du PNR:', err);
+
     });
