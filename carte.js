@@ -161,13 +161,26 @@ const confirmDatesBtn = document.getElementById('confirmDatesBtn');
 const date1Select = document.getElementById('date1Select');
 const date2Select = document.getElementById('date2Select');
 
-const opacityControl = document.getElementById('opacityControl');
-const closeOpacityBtn = document.getElementById('closeOpacityBtn');
-const opacitySlider = document.getElementById('opacitySlider');
-const opacityPercentage = document.getElementById('opacityPercentage');
+// Éléments pour la sélection de zone
+const areaModal = document.getElementById('areaModal');
+const selectAreaBtnToggle = document.getElementById('selectAreaBtnToggle');
+const closeBtnArea = document.querySelector('.close-btn-area');
+const confirmAreaBtn = document.getElementById('confirmAreaBtn');
+const areaSelect = document.getElementById('areaSelect');
+
 
 let lczLayer1, lczLayer2;
 let currentDate1, currentDate2;
+
+// Communes du PNR Vosges du Nord (coordonnées lat/lng et zoom)
+const communes = {
+    'bitche': { lat: 49.0431, lng: 7.4338, zoom: 13, name: 'Bitche' },
+    'volmunster': { lat: 49.0772, lng: 7.6486, zoom: 13, name: 'Volmunster' },
+    'montbronn': { lat: 49.0117, lng: 7.7114, zoom: 13, name: 'Montbronn' },
+    'sturzelbronn': { lat: 49.0358, lng: 7.7797, zoom: 13, name: 'Sturzelbronn' },
+    'meisenthal': { lat: 48.9931, lng: 7.5828, zoom: 13, name: 'Meisenthal' },
+    'philippsbourg': { lat: 48.8986, lng: 7.4294, zoom: 13, name: 'Philippsbourg' }
+};
 
 // Ouvrir le modal de sélection de dates
 compareBtnToggle.addEventListener('click', function() {
@@ -179,9 +192,22 @@ closeBtn.addEventListener('click', function() {
     dateModal.classList.remove('show');
 });
 
+// Ouvrir le modal de sélection de zone
+selectAreaBtnToggle.addEventListener('click', function() {
+    areaModal.classList.add('show');
+});
+
+// Fermer le modal de zone
+closeBtnArea.addEventListener('click', function() {
+    areaModal.classList.remove('show');
+});
+
 window.addEventListener('click', function(event) {
     if (event.target === dateModal) {
         dateModal.classList.remove('show');
+    }
+    if (event.target === areaModal) {
+        areaModal.classList.remove('show');
     }
 });
 
@@ -204,10 +230,24 @@ confirmDatesBtn.addEventListener('click', function() {
     currentDate1 = date1;
     currentDate2 = date2;
     
-    document.getElementById('date1Label').textContent = `LCZ ${date1}`;
-    document.getElementById('date2Label').textContent = `LCZ ${date2}`;
     
     loadComparisonLayers(date1, date2);
+});
+
+// Zoomer sur une commune sélectionnée
+confirmAreaBtn.addEventListener('click', function() {
+    const commune = areaSelect.value;
+
+    if (!commune) {
+        alert('Veuillez sélectionner une commune');
+        return;
+    }
+
+    const communeData = communes[commune];
+    if (communeData) {
+        map.setView([communeData.lat, communeData.lng], communeData.zoom);
+        areaModal.classList.remove('show');
+    }
 });
 
 function loadComparisonLayers(date1, date2) {
@@ -215,8 +255,6 @@ function loadComparisonLayers(date1, date2) {
     if (lczLayer1) map.removeLayer(lczLayer1);
     if (lczLayer2) map.removeLayer(lczLayer2);
 
-    // Afficher le contrôleur d'opacité
-    opacityControl.classList.remove('hidden');
 
     // Charger les deux fichiers GeoJSON
     Promise.all([
@@ -237,50 +275,11 @@ function loadComparisonLayers(date1, date2) {
         lczLayer1.addTo(map);
         lczLayer2.addTo(map);
 
-        // Initialiser le slider à 50%
-        opacitySlider.value = 50;
-        updateLayerOpacity(50);
         
         console.log('Couches affichées avec opacité');
     })
     .catch(err => {
         console.error('Erreur lors du chargement des données:', err);
         alert(`Erreur: ${err.message}`);
-        opacityControl.classList.add('hidden');
     });
-}
-
-// Fermer la comparaison
-closeOpacityBtn.addEventListener('click', function() {
-    opacityControl.classList.add('hidden');
-    if (lczLayer1) map.removeLayer(lczLayer1);
-    if (lczLayer2) map.removeLayer(lczLayer2);
-    lczLayer1 = null;
-    lczLayer2 = null;
-});
-
-// Gestion du slider d'opacité
-opacitySlider.addEventListener('input', function() {
-    updateLayerOpacity(this.value);
-});
-
-function updateLayerOpacity(value) {
-    const opacity = value / 100;
-    const oppositeOpacity = (100 - value) / 100;
-
-    opacityPercentage.textContent = value + '%';
-
-    if (lczLayer1) {
-        lczLayer1.setStyle({
-            opacity: oppositeOpacity,
-            fillOpacity: oppositeOpacity * 0.7
-        });
-    }
-
-    if (lczLayer2) {
-        lczLayer2.setStyle({
-            opacity: opacity,
-            fillOpacity: opacity * 0.7
-        });
-    }
 }
