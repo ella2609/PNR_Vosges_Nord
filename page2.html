@@ -5,10 +5,31 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Evolutions dans le PNR</title>
 
-  <!-- Leaflet CSS (CDN) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* Styles pour corriger la superposition */
+    .buttons-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column; /* Empile les boutons verticalement */
+      gap: 10px;              /* Espace entre les deux boutons */
+      z-index: 1000;          /* S'assure qu'ils sont au-dessus de la carte */
+    }
+
+    /* On s'assure que les boutons ne se positionnent pas eux-mêmes n'importe où */
+    .compare-btn-toggle {
+      position: relative !important; 
+      bottom: auto !important;
+      right: auto !important;
+      margin: 0;
+      /* Ajoutez ici vos styles de boutons (couleur, padding...) */
+    }
+  </style>
 </head>
 <body class="map-page">
   <header>
@@ -18,13 +39,12 @@
 
   <div id="mapid"></div>
 
-  <!-- Bouton pour ouvrir le sélecteur de dates -->
-  <button id="compareBtnToggle" class="compare-btn-toggle">Comparer deux dates</button>
+  <div class="buttons-container">
+    <button id="selectAreaBtnToggle" class="compare-btn-toggle area-btn">Choisir une zone</button>
+    
+    <button id="compareBtnToggle" class="compare-btn-toggle">Comparer deux dates</button>
+  </div>
 
-  <!-- Bouton pour sélectionner une zone -->
-  <button id="selectAreaBtnToggle" class="compare-btn-toggle area-btn">Choisir une zone</button>
-
-  <!-- Modal pour sélectionner les dates -->
   <div id="dateModal" class="date-modal">
     <div class="date-modal-content">
       <span class="close-btn">&times;</span>
@@ -58,7 +78,6 @@
     </div>
   </div>
 
-  <!-- Modal pour sélectionner une commune -->
   <div id="areaModal" class="date-modal">
     <div class="date-modal-content">
       <span class="close-btn-area">&times;</span>
@@ -83,13 +102,10 @@
     </div>
   </div>
 
-  <!-- Leaflet JS (CDN) -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   
-  <!-- Proj4js and Proj4Leaflet for coordinate conversion -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"></script>
 
-  <!-- carte.js (local) -->
   <script src="carte.js"></script>
 </body>
 </html>
