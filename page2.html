@@ -18,6 +18,64 @@
 
   <div id="mapid"></div>
 
+  <!-- Bouton pour ouvrir le sélecteur de dates -->
+  <button id="compareBtnToggle" class="compare-btn-toggle">Comparer deux dates</button>
+
+  <!-- Modal pour sélectionner les dates -->
+  <div id="dateModal" class="date-modal">
+    <div class="date-modal-content">
+      <span class="close-btn">&times;</span>
+      <h2>Sélectionner deux dates à comparer</h2>
+      
+      <div class="date-selectors">
+        <div class="date-selector">
+          <label>Date 1 :</label>
+          <select id="date1Select">
+            <option value="">-- Choisir une date --</option>
+            <option value="2010">2010</option>
+            <option value="2015">2015</option>
+            <option value="2020">2020</option>
+            <option value="2025">2025</option>
+          </select>
+        </div>
+        
+        <div class="date-selector">
+          <label>Date 2 :</label>
+          <select id="date2Select">
+            <option value="">-- Choisir une date --</option>
+            <option value="2010">2010</option>
+            <option value="2015">2015</option>
+            <option value="2020">2020</option>
+            <option value="2025">2025</option>
+          </select>
+        </div>
+      </div>
+      
+      <button id="confirmDatesBtn" class="confirm-dates-btn">Comparer</button>
+    </div>
+  </div>
+
+  <!-- Conteneur pour le comparateur de superposition -->
+  <div id="comparisonContainer" class="comparison-container hidden">
+    <button id="closeComparisonBtn" class="close-comparison-btn">✕</button>
+    
+    <div class="comparison-wrapper">
+      <div class="map-wrapper" id="mapWrapper1">
+        <div id="map1" class="comparison-map"></div>
+        <div class="date-label" id="dateLabel1"></div>
+      </div>
+      
+      <div class="slider-container">
+        <input type="range" id="comparisonSlider" class="comparison-slider" min="0" max="100" value="50">
+      </div>
+      
+      <div class="map-wrapper" id="mapWrapper2">
+        <div id="map2" class="comparison-map"></div>
+        <div class="date-label" id="dateLabel2"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- Leaflet JS (CDN) -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   
