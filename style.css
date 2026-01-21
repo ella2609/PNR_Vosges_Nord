@@ -145,10 +145,11 @@ body.landing-page {
 }
 
 /* Page 2 - Map page */
-body.map-page,
-body.map-page html {
+html.map-page,
+body.map-page {
     height: 100%;
     margin: 0;
+    overflow: hidden;
 }
 
 header {
@@ -158,11 +159,14 @@ header {
     gap: 12px;
     padding: 0 18px;
     background: transparent;
+    position: relative;
+    z-index: 100;
 }
 
 #mapid {
     width: 100%;
     height: calc(100vh - 64px);
+    overflow: hidden;
 }
 
 .back-btn {
@@ -213,6 +217,10 @@ header {
     transform: translateY(-1px);
 }
 
+.area-btn {
+    bottom: 100px;
+}
+
 /* Modal de sélection de dates */
 .date-modal {
     display: none;
@@ -241,6 +249,8 @@ header {
     width: 90%;
     border: 2px solid var(--secondary);
     position: relative;
+    background: linear-gradient(135deg, rgba(15, 40, 24, 0.95) 0%, rgba(45, 80, 22, 0.4) 100%);
+    backdrop-filter: blur(10px);
 }
 
 .close-btn {
@@ -331,6 +341,100 @@ header {
 
 .confirm-dates-btn:active {
     transform: translateY(0);
+}
+
+/* Comparateur de superposition */
+.comparison-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 600;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.comparison-container.hidden {
+    display: none;
+}
+
+.close-comparison-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: var(--secondary);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 610;
+    transition: background 0.18s ease;
+}
+
+.close-comparison-btn:hover {
+    background: var(--accent-leaf);
+}
+
+.comparison-wrapper {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    gap: 0;
+    align-items: stretch;
+}
+
+.map-wrapper {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: #f0f0f0;
+}
+
+.comparison-map {
+    width: 100%;
+    height: 100%;
+}
+
+.date-label {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(45, 80, 22, 0.85);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-weight: 600;
+    z-index: 605;
+    font-size: 0.95rem;
+}
+
+.slider-container {
+    width: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: col-resize;
+    z-index: 605;
+}
+
+.comparison-slider {
+    writing-mode: bt-lr;
+    -webkit-appearance: slider-vertical;
+    appearance: slider-vertical;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    outline: none;
 }
 
 /* Contrôleur d'opacité */
@@ -460,5 +564,20 @@ header {
 
     .date-selector select {
         width: 100%;
+    }
+
+    .comparison-wrapper {
+        flex-direction: column;
+    }
+
+    .slider-container {
+        width: 100%;
+        height: 8px;
+    }
+
+    .comparison-slider {
+        writing-mode: horizontal-tb;
+        -webkit-appearance: slider-horizontal;
+        appearance: slider-horizontal;
     }
 }
