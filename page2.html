@@ -1,99 +1,30 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carte PNR - Lambert 93</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Evolution 2015 - 2025</title>
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Leaflet CSS (CDN) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-    <style>
-        /* La carte doit avoir une hauteur définie pour être visible */
-        body, html { margin: 0; padding: 0; height: 100%; }
-        #mapid { 
-            height: 100vh; 
-            width: 100%; 
-            background: #f0f0f0; 
-        }
-    </style>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="map-page">
+  <header>
+    <a href="index.html" class="back-btn">Page d'accueil</a>
+    <h3 class="page-title">Les LCZ dans le PNR (comparaison 2015 - 2025)</h3>
+  </header>
 
-    <div id="mapid"></div>
+  <div id="mapid"></div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.8.0/proj4.js"></script>
+  <!-- Leaflet JS (CDN) -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+  <!-- Proj4js and Proj4Leaflet for coordinate conversion -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"></script>
 
-    <script>
-        // --- 1. INITIALISATION DE LA CARTE ---
-        var map = L.map('mapid').setView([49.006, 7.704], 10);
-
-        // Ajout du fond de carte
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; OpenStreetMap &copy; CARTO'
-        }).addTo(map);
-
-        // --- 2. CONFIGURATION PROJ4 (Lambert-93) ---
-        const LAMBERT93 = 'EPSG:2154';
-        const WGS84 = 'EPSG:4326';
-        proj4.defs(LAMBERT93, '+proj=lcc +lat_1=49 +lat_2=44 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +units=m +no_defs');
-
-        // --- 3. FONCTIONS DE REPROJECTION ---
-        function reprojectCoords(coords) {
-            // Si c'est un point [x, y] (Lambert-93)
-            if (typeof coords[0] === 'number') {
-                const [x, y] = coords;
-                // Proj4 renvoie [longitude, latitude]
-                return proj4(LAMBERT93, WGS84, [x, y]);
-            }
-            // Si c'est un tableau de tableaux (cas des lignes et polygones)
-            return coords.map(reprojectCoords);
-        }
-
-        function reprojectGeoJSON(geojson) {
-            if (!geojson.features) return geojson;
-            return {
-                ...geojson,
-                features: geojson.features.map(f => ({
-                    ...f,
-                    geometry: {
-                        ...f.geometry,
-                        coordinates: reprojectCoords(f.geometry.coordinates)
-                    }
-                }))
-            };
-        }
-
-        // --- 4. CHARGEMENT DES DONNÉES ---
-        // Remplacez 'Data/PNR_VN.geojson' par le chemin correct de votre fichier
-        fetch('Data/PNR_VN.geojson')
-            .then(resp => {
-                if (!resp.ok) throw new Error("Impossible de charger le fichier GeoJSON. Vérifiez le chemin.");
-                return resp.json();
-            })
-            .then(data => {
-                console.log("Données reçues, début de la reprojection...");
-                
-                const reprojectedData = reprojectGeoJSON(data);
-                
-                const pnrLayer = L.geoJSON(reprojectedData, {
-                    style: {
-                        color: '#2c7a3f',
-                        weight: 3,
-                        fillColor: '#7bd38b',
-                        fillOpacity: 0.3
-                    }
-                }).addTo(map);
-
-                // Zoom automatique sur le polygone
-                if (pnrLayer.getBounds().isValid()) {
-                    map.fitBounds(pnrLayer.getBounds(), { padding: [20, 20] });
-                }
-            })
-            .catch(err => {
-                console.error('Erreur:', err);
-                alert("Erreur lors du chargement : " + err.message);
-            });
-    </script>
+  <!-- carte.js (local) -->
+  <script src="carte.js"></script>
 </body>
 </html>
