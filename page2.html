@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Evolution 2015 - 2025</title>
+  <title>Evolutions dans le PNR</title>
 
   <!-- Leaflet CSS (CDN) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -13,13 +13,16 @@
 <body class="map-page">
   <header>
     <a href="index.html" class="back-btn">Page d'accueil</a>
-    <h3 class="page-title">Les LCZ dans le PNR (comparaison 2015 - 2025)</h3>
+    <h3 class="page-title">Les LCZ dans le PNR (comparaison 2010 - 2025) OU Comparer uniquement les zooms sur certaines zones</h3>
   </header>
 
   <div id="mapid"></div>
 
   <!-- Bouton pour ouvrir le sélecteur de dates -->
   <button id="compareBtnToggle" class="compare-btn-toggle">Comparer deux dates</button>
+
+  <!-- Bouton pour sélectionner une zone -->
+  <button id="selectAreaBtnToggle" class="compare-btn-toggle area-btn">Choisir une zone</button>
 
   <!-- Modal pour sélectionner les dates -->
   <div id="dateModal" class="date-modal">
@@ -55,24 +58,28 @@
     </div>
   </div>
 
-  <!-- Conteneur pour le comparateur de superposition -->
-  <div id="comparisonContainer" class="comparison-container hidden">
-    <button id="closeComparisonBtn" class="close-comparison-btn">✕</button>
-    
-    <div class="comparison-wrapper">
-      <div class="map-wrapper" id="mapWrapper1">
-        <div id="map1" class="comparison-map"></div>
-        <div class="date-label" id="dateLabel1"></div>
+  <!-- Modal pour sélectionner une commune -->
+  <div id="areaModal" class="date-modal">
+    <div class="date-modal-content">
+      <span class="close-btn-area">&times;</span>
+      <h2>Sélectionner une commune</h2>
+      
+      <div class="date-selectors">
+        <div class="date-selector">
+          <label>Commune :</label>
+          <select id="areaSelect">
+            <option value="">-- Choisir une commune --</option>
+            <option value="bitche">Bitche</option>
+            <option value="volmunster">Volmunster</option>
+            <option value="montbronn">Montbronn</option>
+            <option value="sturzelbronn">Sturzelbronn</option>
+            <option value="meisenthal">Meisenthal</option>
+            <option value="philippsbourg">Philippsbourg</option>
+          </select>
+        </div>
       </div>
       
-      <div class="slider-container">
-        <input type="range" id="comparisonSlider" class="comparison-slider" min="0" max="100" value="50">
-      </div>
-      
-      <div class="map-wrapper" id="mapWrapper2">
-        <div id="map2" class="comparison-map"></div>
-        <div class="date-label" id="dateLabel2"></div>
-      </div>
+      <button id="confirmAreaBtn" class="confirm-dates-btn">Explorer</button>
     </div>
   </div>
 
