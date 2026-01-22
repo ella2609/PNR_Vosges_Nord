@@ -21,14 +21,14 @@
       z-index: 1000;          /* S'assure qu'ils sont au-dessus de la carte */
     }
 
-    /* On s'assure que les boutons ne se positionnent pas eux-mêmes n'importe où */
+    /* Même style que l'autre bouton */
     .compare-btn-toggle {
       position: relative !important; 
       bottom: auto !important;
       right: auto !important;
       margin: 0;
-      /* Ajoutez ici vos styles de boutons (couleur, padding...) */
-    }
+    } 
+
   </style>
 </head>
 <body class="map-page">
@@ -89,11 +89,12 @@
           <select id="areaSelect">
             <option value="">-- Choisir une commune --</option>
             <option value="bitche">Bitche</option>
-            <option value="volmunster">Volmunster</option>
-            <option value="montbronn">Montbronn</option>
-            <option value="sturzelbronn">Sturzelbronn</option>
-            <option value="meisenthal">Meisenthal</option>
-            <option value="philippsbourg">Philippsbourg</option>
+            <option value="drachenbronn">Drachenbronn</option>
+            <option value="ingwiller">Ingwiller</option>
+            <option value="lorentzen">Lorentzen</option>
+            <option value="meisenbronn">Meisenbronn</option>
+            <option value="rahling">Rahling</option>
+            <option value="wissembourg">Wissembourg</option>
           </select>
         </div>
       </div>
@@ -106,6 +107,8 @@
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"></script>
 
+  <script src="choix_commune.js"></script>
+  <script src="comparaison_annees.js"></script>
   <script src="carte.js"></script>
 </body>
 </html>
